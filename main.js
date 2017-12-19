@@ -59,9 +59,13 @@ module.exports = (course, stepCallback) => {
         /* Get the Large Banner */
         canvas.get(`/api/v1/courses/${course.info.canvasOU}/files?search_term=largeBanner.jpg`, (err, banner) => {
             /* Put the course banner into place - THIS WILL CHANGE EVENTUALLY */
-            template = template.replace(/img src=".*"/gi,
+            if (banner.length > 0) {
+                template = template.replace(/img src=".*"/gi,
                 `img src="https://byui.instructure.com/courses/${course.info.canvasOU}/files/${banner[0].id}/preview"`);
-            course.success('create-homepage', 'Found and inserted course banner into Homepage.');
+                course.success('create-homepage', 'Found and inserted course banner into Homepage.');
+            } else {
+                course.throwWarning('create-homepage', 'Unable to find a largeBanner.jpg in the course.');
+            }
             /* Put the course description into the template */
             template = template.replace(/\[Lorem.*\]/gi, getDescription());
             /* Send back the updated template */
