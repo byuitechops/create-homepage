@@ -1,0 +1,30 @@
+{
+    "name": "create-homepage",
+    "version": "1.0.0",
+    "description": "Creates the homepage for a Canvas course and puts a template in, but does not populate it.",
+    "main": "main.js",
+    "dependencies": {
+        "canvas-wrapper": "github:byuitechops/canvas-wrapper",
+        "he": "^1.1.1"
+    },
+    "devDependencies": {
+        "async": "^2.6.0",
+        "child-development-kit": "github:byuitechops/child-development-kit",
+        "tap": "^10.7.3"
+    },
+    "scripts": {
+        "start": "node ./node_modules/child-development-kit/runChild.js",
+        "test": "tap ./node_modules/child-development-kit/testChild.js -T"
+    },
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/byuitechops/create-homepage.git"
+    },
+    "author": "Zachary Williams, Daniel Green",
+    "license": "MIT",
+    "bugs": {
+        "url": "https://github.com/byuitechops/create-homepage/issues"
+    },
+    "homepage": "https://github.com/byuitechops/create-homepage#readme",
+    "childType": "postImport"
+}
