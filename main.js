@@ -31,28 +31,6 @@ module.exports = (course, stepCallback) => {
     /* Update the template using course information */
     function updateTemplate(template, callback) {
 
-        /* Retrieves the course description from the syllabus_d2l file */
-        function getDescription() {
-            /* Get the overview file */
-            var overview = course.content.find(file => file.name === 'syllabus_d2l.xml');
-            /* Get the description attribute, which holds the text we want */
-            var description = overview.dom('syllabus').attr('description');
-            /* Decode all entities into HTML tags 'n stuff */
-            description = he.decode(description);
-            /* Load it into Cheerio */
-            var $ = cheerio.load(description);
-            /* Get just the header we're looking for */
-            var aboutTheCourse = $('h1').filter((index, element) => {
-                return $(element).text().toLowerCase() === 'about the course';
-            });
-            /* If we found the header, then return the text, otherwise... */
-            if (aboutTheCourse.length === 1) {
-                return $(aboutTheCourse[0]).next().text();
-            } else {
-                return 'Course Description goes here.';
-            }
-        }
-
         /* Put the course name into place */
         template = template.replace(/\[Course Name\]/gi, course.info.fileName.split('.zip')[0]);
 
@@ -66,8 +44,8 @@ module.exports = (course, stepCallback) => {
             } else {
                 course.throwWarning('create-homepage', 'Unable to find a largeBanner.jpg in the course.');
             }
-            /* Put the course description into the template */
-            template = template.replace(/\[Lorem.*\]/gi, getDescription());
+            /* Put the course description instruction bit into the template */
+            template = template.replace(/\[Lorem.*\]/gi, `[Course Description goes here]`);
             /* Send back the updated template */
             callback(null, template);
         });
