@@ -23,7 +23,7 @@ module.exports = (course, stepCallback) => {
                 callback(null, d.toString());
             });
 
-        }).on('error', (e) => {
+        }).on('error', (err) => {
             callback(err, null);
         });
     }
@@ -39,7 +39,7 @@ module.exports = (course, stepCallback) => {
             /* Put the course banner into place - THIS WILL CHANGE EVENTUALLY */
             if (banner.length > 0) {
                 template = template.replace(/img src=".*"/gi,
-                `img src="https://byui.instructure.com/courses/${course.info.canvasOU}/files/${banner[0].id}/preview"`);
+                    `img src="https://byui.instructure.com/courses/${course.info.canvasOU}/files/${banner[0].id}/preview"`);
                 course.success('create-homepage', 'Found and inserted course banner into Homepage.');
             } else {
                 course.throwWarning('create-homepage', 'Unable to find a largeBanner.jpg in the course.');
@@ -54,40 +54,37 @@ module.exports = (course, stepCallback) => {
 
     /* Create the Front Page */
     function createFrontPage(template, callback) {
-        canvas.put(`/api/v1/courses/${course.info.canvasOU}/front_page`,
-        {
-            'wiki_page[title]': course.info.fileName.split('.zip')[0],
-            'wiki_page[body]': template,
-            'wiki_page[editing_roles]': 'teachers',
-            'wiki_page[published]': true
-        },
-        (err, page) => {
-            if (err) callback(err, page);
-            else {
-                course.success('create-homepage', 'Course Homepage successfully created with the template.');
-                callback(null, page);
-            }
-        });
+        canvas.put(`/api/v1/courses/${course.info.canvasOU}/front_page`, {
+                'wiki_page[title]': course.info.fileName.split('.zip')[0],
+                'wiki_page[body]': template,
+                'wiki_page[editing_roles]': 'teachers',
+                'wiki_page[published]': true
+            },
+            (err, page) => {
+                if (err) callback(err, page);
+                else {
+                    course.success('create-homepage', 'Course Homepage successfully created with the template.');
+                    callback(null, page);
+                }
+            });
     }
 
     function updateHomepage(page, callback) {
         /* This API call is not on the official docs, but here is a thread
            explaining it: https://community.canvaslms.com/thread/11645 */
-        canvas.put(`/api/v1/courses/${course.info.canvasOU}`,
-        {
-            'course[default_view]': 'wiki'
-        },
-        (err, canvasCourse) => {
-            if (err) callback(err, canvasCourse);
-            else {
-                course.success('create-homepage', 'Course Default View set to the Front Page.');
-                callback(null, canvasCourse);
-            }
-        });
+        canvas.put(`/api/v1/courses/${course.info.canvasOU}`, {
+                'course[default_view]': 'wiki'
+            },
+            (err, canvasCourse) => {
+                if (err) callback(err, canvasCourse);
+                else {
+                    course.success('create-homepage', 'Course Default View set to the Front Page.');
+                    callback(null, canvasCourse);
+                }
+            });
     }
-
     /* The functions to run for this module */
-    var functions =  [
+    var functions = [
         getTemplate,
         updateTemplate,
         createFrontPage,
@@ -99,11 +96,8 @@ module.exports = (course, stepCallback) => {
         if (err) {
             course.throwErr('create-homepage', err);
             stepCallback(null, course);
-        }
-        else {
+        } else {
             stepCallback(null, course);
         }
     });
-
-
 };
