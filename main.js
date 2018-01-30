@@ -60,7 +60,7 @@ module.exports = (course, stepCallback) => {
     /* Create the Front Page */
     function createFrontPage(template, callback) {
         canvas.put(`/api/v1/courses/${course.info.canvasOU}/front_page`, {
-            'wiki_page[title]': course.info.fileName.split('.zip')[0],
+            'wiki_page[title]': '-Course Homepage',
             'wiki_page[body]': template,
             'wiki_page[editing_roles]': 'teachers',
             'wiki_page[published]': true
