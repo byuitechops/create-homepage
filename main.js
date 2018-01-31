@@ -20,7 +20,9 @@ module.exports = (course, stepCallback) => {
 
     /* Get the template from equella */
     function getTemplate(callback) {
-        https.get('https://content.byui.edu/file/a397b063-c8bd-4e86-87a3-04a6ac57b49c/$/home.html', (res) => {
+        // UNOFFICIAL EQUELLA URL: https://content.byui.edu/file/a397b063-c8bd-4e86-87a3-04a6ac57b49c/$/home.html
+        /* GitHub URL to byui-design-lti home page template */
+        https.get('https://raw.githubusercontent.com/byuitechops/byui-design-lti/master/views/homePage.ejs', (res) => {
 
             /* When we receive the homepage template, send it on */
             res.on('data', (d) => {
@@ -37,7 +39,7 @@ module.exports = (course, stepCallback) => {
     function updateTemplate(template, callback) {
 
         /* Put the course name into place */
-        template = template.replace(/\[Course Name\]/gi, course.info.fileName.split('.zip')[0]);
+        template = template.replace(/<%=\s*courseName\s*%>/gi, course.info.fileName.split('.zip')[0]);
 
         /* Get the Large Banner */
         canvas.get(`/api/v1/courses/${course.info.canvasOU}/files?search_term=largeBanner.jpg`, (err, banner) => {
@@ -47,7 +49,7 @@ module.exports = (course, stepCallback) => {
                     `img src="https://byui.instructure.com/courses/${course.info.canvasOU}/files/${banner[0].id}/preview"`);
                 course.message('Found and inserted course banner into Homepage');
             } else {
-                course.warning('Unable to find a "largeBanner.jph" to put in the Homepage');
+                course.warning('Unable to find a "largeBanner.jpg" to put in the Homepage');
             }
             /* Put the course description instruction bit into the template */
             template = template.replace(/\[Lorem.*\]/gi, '[Course Description goes here]');
@@ -78,15 +80,15 @@ module.exports = (course, stepCallback) => {
         /* This API call is not on the official docs, but here is a thread
            explaining it: https://community.canvaslms.com/thread/11645 */
         canvas.put(`/api/v1/courses/${course.info.canvasOU}`, {
-                'course[default_view]': 'wiki'
-            },
-            (err, canvasCourse) => {
-                if (err) callback(err, canvasCourse);
-                else {
-                    course.message('Course Default View set to the Front Page');
-                    callback(null, canvasCourse);
-                }
-            });
+            'course[default_view]': 'wiki'
+        },
+        (err, canvasCourse) => {
+            if (err) callback(err, canvasCourse);
+            else {
+                course.message('Course Default View set to the Front Page');
+                callback(null, canvasCourse);
+            }
+        });
     }
 
     /* Waterfall our functions so we can keep it all organized */
