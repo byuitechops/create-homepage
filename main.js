@@ -38,7 +38,8 @@ module.exports = (course, stepCallback) => {
     function updateTemplate(template, callback) {
 
         /* Put the course name into place */
-        template = template.replace(/<%=\s*courseName\s*%>/gi, course.info.fileName.split('.zip')[0]);
+        template = template.replace(/<%=\s*courseName\s*%>/gi, course.info.courseName);
+        template = template.replace(/<%=\s*courseClass\s*%>/gi, course.info.courseCode.replace(/\s/g, ''));
 
 
         /* Assumes reorganize file structure has/will run. reorganize file structure DOES NOT have to run first */
