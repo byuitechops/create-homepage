@@ -1,9 +1,8 @@
 /*eslint-env node, es6*/
 
 /* Module Description */
-// Creates a homepage in the course, but does not populate it
+/* Creates a homepage in the course, but does not populate it */
 
-/* Put dependencies here */
 const https = require('https');
 const canvas = require('canvas-wrapper');
 const asyncLib = require('async');
@@ -41,23 +40,19 @@ module.exports = (course, stepCallback) => {
         /* Put the course name into place */
         template = template.replace(/<%=\s*courseName\s*%>/gi, course.info.fileName.split('.zip')[0]);
 
-        /* Get the Large Banner */
-        canvas.get(`/api/v1/courses/${course.info.canvasOU}/files?search_term=largeBanner.jpg`, (err, banner) => {
-            /* Put the course banner into place - THIS WILL CHANGE EVENTUALLY */
-            if (banner.length > 0) {
-                template = template.replace(/img src=".*"/gi,
-                    `img src="https://byui.instructure.com/courses/${course.info.canvasOU}/files/${banner[0].id}/preview"`);
-                course.message('Found and inserted course banner into Homepage');
-            } else {
-                course.warning('Unable to find a "largeBanner.jpg" to put in the Homepage');
-            }
-            /* Put the course description instruction bit into the template */
-            template = template.replace(/\[Lorem.*\]/gi, '[Course Description goes here]');
-            /* Send back the updated template */
-            callback(null, template);
-        });
 
+        /* Assumes reorganize file structure has/will run. reorganize file structure DOES NOT have to run first */
+        template = template.replace(/img src=".*"/gi,
+            `img src="https://${course.info.domain}.instructure.com/courses/${course.info.canvasOU}/file_contents/course%20files/template/homeImage.jpg"`);
+        course.message('Found and inserted course banner into Homepage');
+
+        /* Put the course description instruction bit into the template */
+        template = template.replace(/\[Lorem.*\]/gi, '[Course Description goes here]');
+        /* Send back the updated template */
+        callback(null, template);
     }
+
+
 
     /* Create the Front Page */
     function createFrontPage(template, callback) {
