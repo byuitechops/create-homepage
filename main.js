@@ -1,5 +1,3 @@
-/*eslint-env node, es6*/
-
 /* Module Description */
 /* Creates a homepage in the course, but does not populate it */
 
