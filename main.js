@@ -41,6 +41,7 @@ module.exports = (course, stepCallback) => {
         template = template.replace(/<%=\s*courseName\s*%>/gi, course.info.courseName);
         template = template.replace(/<%=\s*courseClass\s*%>/gi, course.info.courseCode.replace(/\s/g, ''));
 
+        template = template.replace(/<div class="lessons">/, '<div class="lessons generate">');
 
         /* Assumes reorganize file structure has/will run. reorganize file structure DOES NOT have to run first */
         template = template.replace(/img src=".*"/gi,
