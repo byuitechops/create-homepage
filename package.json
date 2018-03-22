@@ -4,7 +4,7 @@
     "description": "Creates the homepage for a Canvas course and puts a template in, but does not populate it.",
     "main": "main.js",
     "dependencies": {
-        "canvas-wrapper": "git+https://github.com/byuitechops/Canvas-wrapper",
+        "canvas-wrapper": "git+https://github.com/byuitechops/canvas-wrapper",
         "he": "^1.1.1"
     },
     "devDependencies": {
