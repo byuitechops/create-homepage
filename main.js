@@ -36,10 +36,14 @@ module.exports = (course, stepCallback) => {
     function updateTemplate(template, callback) {
 
         /* Put the course name into place */
-        template = template.replace(/<%=\s*courseName\s*%>/gi, course.info.courseName);
+        template = template.replace(/<%=\s*courseName\s*%>/gi, course.info.courseCode);
         template = template.replace(/<%=\s*courseClass\s*%>/gi, course.info.courseCode.replace(/\s/g, ''));
 
+        /* add the generate class to the lessons container */
         template = template.replace(/<div class="lessons">/, '<div class="lessons generate">');
+
+        /* remove the welcome class */
+        // TODO should this be using cheerio?
 
         /* Assumes reorganize file structure has/will run. reorganize file structure DOES NOT have to run first */
         template = template.replace(/img src=".*"/gi,
