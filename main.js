@@ -56,8 +56,6 @@ module.exports = (course, stepCallback) => {
         callback(null, template);
     }
 
-
-
     /* Create the Front Page */
     function createFrontPage(template, callback) {
         canvas.put(`/api/v1/courses/${course.info.canvasOU}/front_page`, {
@@ -88,6 +86,13 @@ module.exports = (course, stepCallback) => {
                 callback(null, canvasCourse);
             }
         });
+    }
+
+    var validPlatforms = ['online', 'pathway'];
+    if (validPlatforms.includes(course.settings.platform)) {
+        course.message('Invalid platform. Skipping child module');
+        stepCallback(null, course);
+        return;
     }
 
     /* Waterfall our functions so we can keep it all organized */
