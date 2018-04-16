@@ -89,7 +89,7 @@ module.exports = (course, stepCallback) => {
     }
 
     var validPlatforms = ['online', 'pathway'];
-    if (validPlatforms.includes(course.settings.platform)) {
+    if (!validPlatforms.includes(course.settings.platform)) {
         course.message('Invalid platform. Skipping child module');
         stepCallback(null, course);
         return;
