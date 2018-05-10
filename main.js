@@ -15,19 +15,6 @@ module.exports = (course, stepCallback) => {
 
     /* Get the template from equella */
     function getTemplate(callback) {
-        // /* GitHub URL to byui-design-lti home page template */
-        // https.get('https://raw.githubusercontent.com/byuitechops/byui-design-lti/master/views/homePage.ejs', (res) => {
-
-        //     /* When we receive the homepage template, send it on */
-        //     res.on('data', (d) => {
-        //         course.message('Retrieved Homepage Template');
-        //         callback(null, d.toString());
-        //     });
-
-        // }).on('error', (err) => {
-        //     callback(err, null);
-        // });
-
         request('https://raw.githubusercontent.com/byuitechops/byui-design-lti/master/views/homePage.ejs', (err, res, body) => {
             if (err) {
                 callback(err);
@@ -43,7 +30,7 @@ module.exports = (course, stepCallback) => {
 
         /* Replace things easily identified with regex */
         template = template.replace(/<%=\s*courseName\s*%>/gi, course.info.courseCode);
-        template = template.replace(/<%=\s*courseClass\s*%>/gi, course.info.courseCode.replace(/\s/g, ''));
+        template = template.replace(/<%=\s*courseClass\s*%>/gi, course.info.courseCode.replace(/\s/g, '').toLowerCase());
         template = template.replace(/\[Lorem.*\]/gi, '[Course Description goes here]');
 
         var $ = cheerio.load(template);
