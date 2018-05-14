@@ -36,10 +36,13 @@ module.exports = (course, stepCallback) => {
         var $ = cheerio.load(template);
 
         /* Add the generate class */
-        $('.lessons').addClass('generate');
+        $('.lessons').addClass('generate'); // does this work?
 
         /* Add the homeImage src */
+        // ERROR this breaks
         $('img').attr('src', `https://${course.info.domain}.instructure.com/courses/${course.info.canvasOU}/file_contents/course%20files/template/homeImage.jpg`);
+
+        template = $.html();
 
         callback(null, template);
     }
@@ -47,33 +50,33 @@ module.exports = (course, stepCallback) => {
     /* Create the Front Page */
     function createFrontPage(template, callback) {
         canvas.put(`/api/v1/courses/${course.info.canvasOU}/front_page`, {
-                'wiki_page[title]': '-Course Homepage',
-                'wiki_page[body]': template,
-                'wiki_page[editing_roles]': 'teachers',
-                'wiki_page[published]': true
-            },
-            (err, page) => {
-                if (err) callback(err, page);
-                else {
-                    course.message('Course Homepage successfully created with the template');
-                    callback(null, page);
-                }
-            });
+            'wiki_page[title]': '-Course Homepage',
+            'wiki_page[body]': template,
+            'wiki_page[editing_roles]': 'teachers',
+            'wiki_page[published]': true
+        },
+        (err, page) => {
+            if (err) callback(err, page);
+            else {
+                course.message('Course Homepage successfully created with the template');
+                callback(null, page);
+            }
+        });
     }
 
     function updateHomepage(page, callback) {
         /* This API call is not on the official docs, but here is a thread
            explaining it: https://community.canvaslms.com/thread/11645 */
         canvas.put(`/api/v1/courses/${course.info.canvasOU}`, {
-                'course[default_view]': 'wiki'
-            },
-            (err, canvasCourse) => {
-                if (err) callback(err, canvasCourse);
-                else {
-                    course.message('Course Default View set to the Front Page');
-                    callback(null, canvasCourse);
-                }
-            });
+            'course[default_view]': 'wiki'
+        },
+        (err, canvasCourse) => {
+            if (err) callback(err, canvasCourse);
+            else {
+                course.message('Course Default View set to the Front Page');
+                callback(null, canvasCourse);
+            }
+        });
     }
 
     var validPlatforms = ['online', 'pathway'];
