@@ -39,7 +39,6 @@ module.exports = (course, stepCallback) => {
         $('.lessons').addClass('generate'); // does this work?
 
         /* Add the homeImage src */
-        // ERROR this breaks
         $('img').attr('src', `https://${course.info.domain}.instructure.com/courses/${course.info.canvasOU}/file_contents/course%20files/template/homeImage.jpg`);
 
         template = $.html();
