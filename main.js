@@ -32,6 +32,7 @@ module.exports = (course, stepCallback) => {
         template = template.replace(/<%=\s*courseName\s*%>/gi, course.info.courseCode);
         template = template.replace(/<%=\s*courseClass\s*%>/gi, course.info.courseCode.replace(/\s/g, '').toLowerCase());
         template = template.replace(/\[Lorem.*\]/gi, '[Course Description goes here]');
+        template = template.replace(/Additional\sResources/gi, 'Student Resources');
 
         var $ = cheerio.load(template);
 
