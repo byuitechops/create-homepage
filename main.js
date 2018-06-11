@@ -54,13 +54,13 @@ module.exports = (course, stepCallback) => {
             'wiki_page[editing_roles]': 'teachers',
             'wiki_page[published]': true
         },
-        (err, page) => {
-            if (err) callback(err, page);
-            else {
-                course.message('Course Homepage successfully created with the template');
-                callback(null, page);
-            }
-        });
+            (err, page) => {
+                if (err) callback(err, page);
+                else {
+                    course.message('Course Homepage successfully created with the template');
+                    callback(null, page);
+                }
+            });
     }
 
     function updateHomepage(page, callback) {
@@ -69,20 +69,13 @@ module.exports = (course, stepCallback) => {
         canvas.put(`/api/v1/courses/${course.info.canvasOU}`, {
             'course[default_view]': 'wiki'
         },
-        (err, canvasCourse) => {
-            if (err) callback(err, canvasCourse);
-            else {
-                course.message('Course Default View set to the Front Page');
-                callback(null, canvasCourse);
-            }
-        });
-    }
-
-    var validPlatforms = ['online', 'pathway'];
-    if (!validPlatforms.includes(course.settings.platform)) {
-        course.message('Invalid platform. Skipping child module');
-        stepCallback(null, course);
-        return;
+            (err, canvasCourse) => {
+                if (err) callback(err, canvasCourse);
+                else {
+                    course.message('Course Default View set to the Front Page');
+                    callback(null, canvasCourse);
+                }
+            });
     }
 
     /* Waterfall our functions so we can keep it all organized */
