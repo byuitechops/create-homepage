@@ -1,4 +1,5 @@
 const request = require('request');
+const fs = require('fs');
 const canvas = require('canvas-wrapper');
 const asyncLib = require('async');
 const cheerio = require('cheerio');
@@ -15,14 +16,29 @@ module.exports = (course, stepCallback) => {
 
     /* Get the template from equella */
     function getTemplate(callback) {
-        request('https://raw.githubusercontent.com/byuitechops/byui-design-lti/master/views/homePage.ejs', (err, res, body) => {
-            if (err) {
-                callback(err);
-                return;
-            }
-            course.message('Retrieved Homepage Template');
-            callback(null, body);
-        });
+        if (course.info.platform === 'campus') {
+            // Campus courses have more than 1 template to choose from. The template will be chosen on startup and be stored on the course object.
+            // The templates should be stored locally, so a path to that local file will be necessary.
+
+            // TODO: Give it the path to the correct template
+            fs.readFile(`/campusTemplates/${course.info.campusTemplate}`, (err, body) => {
+                if (err) {
+                    callback(err);
+                    return;
+                }
+                course.message('Retrieved Campus Homepage Template');
+                callback(null, body);
+            });
+        } else {
+            request('https://raw.githubusercontent.com/byuitechops/byui-design-lti/master/views/homePage.ejs', (err, res, body) => {
+                if (err) {
+                    callback(err);
+                    return;
+                }
+                course.message('Retrieved Online Homepage Template');
+                callback(null, body);
+            });
+        }
     }
 
     /* Update the template using course information */
@@ -55,13 +71,13 @@ module.exports = (course, stepCallback) => {
             'wiki_page[editing_roles]': 'teachers',
             'wiki_page[published]': true
         },
-            (err, page) => {
-                if (err) callback(err, page);
-                else {
-                    course.message('Course Homepage successfully created with the template');
-                    callback(null, page);
-                }
-            });
+        (err, page) => {
+            if (err) callback(err, page);
+            else {
+                course.message('Course Homepage successfully created with the template');
+                callback(null, page);
+            }
+        });
     }
 
     function updateHomepage(page, callback) {
@@ -70,13 +86,13 @@ module.exports = (course, stepCallback) => {
         canvas.put(`/api/v1/courses/${course.info.canvasOU}`, {
             'course[default_view]': 'wiki'
         },
-            (err, canvasCourse) => {
-                if (err) callback(err, canvasCourse);
-                else {
-                    course.message('Course Default View set to the Front Page');
-                    callback(null, canvasCourse);
-                }
-            });
+        (err, canvasCourse) => {
+            if (err) callback(err, canvasCourse);
+            else {
+                course.message('Course Default View set to the Front Page');
+                callback(null, canvasCourse);
+            }
+        });
     }
 
     /* Waterfall our functions so we can keep it all organized */

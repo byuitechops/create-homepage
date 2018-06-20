@@ -1,7 +1,7 @@
 # Create Homepage
 ### *Package Name*: create-homepage
 ### *Child Type*: Post import
-### *Platform*: Online
+### *Platform*: Online, Campus
 ### *Required*: Required
 
 This child module is built to be used by the Brigham Young University - Idaho D2L to Canvas Conversion Tool. It utilizes the standard `module.exports => (course, stepCallback)` signature and uses the Conversion Tool's standard logging functions. You can view extended documentation [Here](https://github.com/byuitechops/d2l-to-canvas-conversion-tool/tree/master/documentation).
