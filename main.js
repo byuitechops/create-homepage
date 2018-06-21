@@ -20,20 +20,11 @@ let templates = {
 
 let tabs = ['other', 'modules', 'syllabus'];
 
-
 module.exports = (course, stepCallback) => {
-
-    /* The functions to run for this module */
-    var functions = [
-        getTemplate,
-        updateTemplate,
-        createFrontPage,
-        updateHomepage
-    ];
 
     /* Get the template from equella */
     function getTemplate(callback) {
-        if (course.info.platform === 'campus') {
+        if (course.settings.platform === 'campus') {
             if (!tabs.includes(course.info.campusTemplate.toLowerCase())) {
 
                 // Campus courses have more than 1 template to choose from. The template will be chosen on startup and be stored on the course object.
@@ -73,15 +64,16 @@ module.exports = (course, stepCallback) => {
 
     /* Update the template using course information */
     function updateTemplate(template, callback) {
-
+        var $;
         /* Replace things easily identified with regex */
-        var $ = cheerio.load(template);
-        if (course.info.platform !== 'campus') {
-            // Online
+        if (course.settings.platform !== 'campus') {
+            /* Online */
             template = template.replace(/<%=\s*courseName\s*%>/gi, course.info.courseCode);
             template = template.replace(/<%=\s*courseClass\s*%>/gi, course.info.courseCode.replace(/\s/g, '').toLowerCase());
-            template = template.replace(/\[Lorem.*\]/gi, '[Course Description goes here]');
             template = template.replace(/Additional\sResources/gi, 'Student Resources');
+
+            /* HAS to happen after template has been updated! */
+            $ = cheerio.load(template);
 
             /* Add the generate class */
             $('.lessons').addClass('generate'); // does this work?
@@ -92,8 +84,11 @@ module.exports = (course, stepCallback) => {
             template = $.html();
 
         } else {
-            // Campus
+            // IMPORTANT! $ is undefined at this point!
+            /* Campus */
             // Add edits to the template here
+
+            // are the edits always the same? If so they could be done before the if
         }
         callback(null, template);
     }
@@ -109,6 +104,8 @@ module.exports = (course, stepCallback) => {
         (err, page) => {
             if (err) callback(err, page);
             else {
+                //ERROR template is undefined for online
+                // TODO convert to course.log & update readme
                 course.message(`Course Homepage successfully created with the ${course.info.campusTemplate} template`);
                 callback(null, page);
             }
@@ -124,6 +121,8 @@ module.exports = (course, stepCallback) => {
         (err, canvasCourse) => {
             if (err) callback(err, canvasCourse);
             else {
+                // ERROR template is undefined on online
+                // TODO convert to course.log & update readme
                 course.message(`"${course.info.campusTemplate}" template set as the Front Page`);
                 callback(null, canvasCourse);
             }
@@ -132,6 +131,13 @@ module.exports = (course, stepCallback) => {
 
 
     // Check if the template is a wiki page or a course tab
+    /* The functions to run for this module */
+    var functions = [
+        getTemplate,
+        updateTemplate,
+        createFrontPage,
+        updateHomepage
+    ];
 
     asyncLib.waterfall(functions, (err, result) => {
         // The homepage will be a wiki page
