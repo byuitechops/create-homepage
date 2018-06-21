@@ -37,7 +37,7 @@ module.exports = (course, stepCallback) => {
             if (!tabs.includes(course.info.campusTemplate.toLowerCase())) {
 
                 // Campus courses have more than 1 template to choose from. The template will be chosen on startup and be stored on the course object.
-                // The templates are stored here: https://byui.instructure.com/courses/16631/pages. Use the canvas-wrapper to get all the pages and select the template.
+                // The templates are stored here: https://byui.instructure.com/courses/16631/pages. Use the canvas-wrapper to get the correct template.
 
                 canvas.get(`/api/v1/courses/16631/pages/${templates[course.info.campusTemplate]}`, (err, page) => {
                     if (err) {
