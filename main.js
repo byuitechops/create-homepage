@@ -104,9 +104,9 @@ module.exports = (course, stepCallback) => {
         (err, page) => {
             if (err) callback(err, page);
             else {
-                //ERROR template is undefined for online
                 // TODO convert to course.log & update readme
-                course.message(`Course Homepage successfully created with the ${course.info.campusTemplate} template`);
+                if (course.settings.platform === 'campus') course.message(`Course Homepage successfully created with the ${course.info.campusTemplate} template`);
+                else course.message('Course Homepage successfully created');
                 callback(null, page);
             }
         });
@@ -121,14 +121,14 @@ module.exports = (course, stepCallback) => {
         (err, canvasCourse) => {
             if (err) callback(err, canvasCourse);
             else {
-                // ERROR template is undefined on online
                 // TODO convert to course.log & update readme
-                course.message(`"${course.info.campusTemplate}" template set as the Front Page`);
+                if (course.settings.platform === 'campus') course.message(`"${course.info.campusTemplate}" template set as the Front Page`);
+                else course.message('Home page set as the Front Page');
+
                 callback(null, canvasCourse);
             }
         });
     }
-
 
     // Check if the template is a wiki page or a course tab
     /* The functions to run for this module */
