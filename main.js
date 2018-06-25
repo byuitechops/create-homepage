@@ -34,7 +34,7 @@ module.exports = (course, stepCallback) => {
     /* Get the template from equella */
     function getTemplate(callback) {
         if (course.info.platform === 'campus') {
-            if (!tabs.includes(course.info.campusTemplate.toLowerCase())) {
+            if (!tabs.includes(course.info.data.campusTemplate.toLowerCase())) {
 
                 // Campus courses have more than 1 template to choose from. The template will be chosen on startup and be stored on the course object.
                 // The templates are stored here: https://byui.instructure.com/courses/16631/pages. Use the canvas-wrapper to get the correct template.
