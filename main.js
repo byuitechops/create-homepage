@@ -23,14 +23,6 @@ let tabs = ['other', 'modules', 'syllabus'];
 
 module.exports = (course, stepCallback) => {
 
-    /* The functions to run for this module */
-    var functions = [
-        getTemplate,
-        updateTemplate,
-        createFrontPage,
-        updateHomepage
-    ];
-
     /* Get the template from equella */
     function getTemplate(callback) {
         if (course.info.platform === 'campus') {
@@ -39,22 +31,22 @@ module.exports = (course, stepCallback) => {
                 // Campus courses have more than 1 template to choose from. The template will be chosen on startup and be stored on the course object.
                 // The templates are stored here: https://byui.instructure.com/courses/16631/pages. Use the canvas-wrapper to get the correct template.
 
-                canvas.get(`/api/v1/courses/16631/pages/${templates[course.info.campusTemplate]}`, (err, page) => {
+                canvas.get(`/api/v1/courses/16631/pages/${templates[course.info.data.campusTemplate]}`, (err, page) => {
                     if (err) {
                         callback(err);
                         return;
                     }
-                    course.message(`Retrieved ${course.info.campusTemplate} Template`);
+                    course.message(`Retrieved ${course.info.data.campusTemplate} Template`);
                     callback(null, page[0].body);
                 });
             } else {
                 // Set the homepage to be either the syllabus or modules tab
                 canvas.put(`/api/v1/courses/${course.info.canvasOU}`, {
-                    'course[default_view]': templates[course.info.campusTemplate]
+                    'course[default_view]': templates[course.info.data.campusTemplate]
                 }, (err, canvasCourse) => {
                     if (err) stepCallback(err, course);
                     else {
-                        course.message(`"${templates[course.info.campusTemplate]}" set as the Front Page`);
+                        course.message(`"${templates[course.info.data.campusTemplate]}" set as the Front Page`);
                         stepCallback(null, course);
                     }
                 });
@@ -109,7 +101,7 @@ module.exports = (course, stepCallback) => {
         (err, page) => {
             if (err) callback(err, page);
             else {
-                course.message(`Course Homepage successfully created with the ${course.info.campusTemplate} template`);
+                course.message(`Course Homepage successfully created with the ${course.info.data.campusTemplate} template`);
                 callback(null, page);
             }
         });
@@ -124,14 +116,21 @@ module.exports = (course, stepCallback) => {
         (err, canvasCourse) => {
             if (err) callback(err, canvasCourse);
             else {
-                course.message(`"${course.info.campusTemplate}" template set as the Front Page`);
+                course.message(`"${course.info.data.campusTemplate}" template set as the Front Page`);
                 callback(null, canvasCourse);
             }
         });
     }
 
 
-    // Check if the template is a wiki page or a course tab
+    /* The functions to run for this module */
+    var functions = [
+        getTemplate,
+        updateTemplate,
+        createFrontPage,
+        updateHomepage
+    ];
+
 
     asyncLib.waterfall(functions, (err, result) => {
         // The homepage will be a wiki page
