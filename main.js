@@ -67,15 +67,15 @@ module.exports = (course, stepCallback) => {
     function updateTemplate(template, callback) {
 
         /* Replace things easily identified with regex */
-        var $ = cheerio.load(template);
+        var $;
         if (course.info.platform !== 'campus') {
             // Online
             template = template.replace(/<%=\s*courseName\s*%>/gi, course.info.courseCode);
             template = template.replace(/<%=\s*courseClass\s*%>/gi, course.info.courseCode.replace(/\s/g, '').toLowerCase());
-            template = template.replace(/\[Lorem.*\]/gi, '[Course Description goes here]');
             template = template.replace(/Additional\sResources/gi, 'Student Resources');
 
             /* Add the generate class */
+            $ = cheerio.load(template);
             $('.lessons').addClass('generate'); // does this work?
 
             /* Add the homeImage src */
