@@ -13,9 +13,9 @@ let templates = {
     'Full Pictures': 'picture-buttons-full-example',
     'Schedule': 'detail-template-mwf',
     'Small Pictures': 'picture-buttons-small-example',
-    'Sm Weeks Auto': 'default-template-small',
+    'Sm Weeks Auto': 'weeks-auto-small',
     'Syllabus': 'syllabus',
-    'Weeks Auto': 'default-template-large'
+    'Weeks Auto': 'weeks-auto-large'
 };
 
 let tabs = ['other', 'modules', 'syllabus'];
