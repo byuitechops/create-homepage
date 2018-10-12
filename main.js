@@ -25,7 +25,7 @@ module.exports = (course, stepCallback) => {
 
     /* Get the template from equella */
     function getTemplate(callback) {
-        if (course.info.platform === 'campus') {
+        if (course.info.data.platform === 'campus') {
             if (!tabs.includes(course.info.data.campusTemplate.toLowerCase())) {
 
                 // Campus courses have more than 1 template to choose from. The template will be chosen on startup and be stored on the course object.
@@ -68,7 +68,7 @@ module.exports = (course, stepCallback) => {
 
         /* Replace things easily identified with regex */
         var $;
-        if (course.info.platform !== 'campus') {
+        if (course.info.data.platform !== 'campus') {
             // Online
             template = template.replace(/<%=\s*courseName\s*%>/gi, course.info.courseCode);
             template = template.replace(/<%=\s*courseClass\s*%>/gi, course.info.courseCode.replace(/\s/g, '').toLowerCase());
