@@ -21,10 +21,6 @@ let tabs = ['other', 'modules', 'syllabus'];
 
 
 module.exports = (course, stepCallback) => {
-    // TESTING - remove for prod
-    course.settings.platform = 'online';
-    course.info.data.campusTemplate = 'Syllabus';
-
     /* Get the template from equella */
     function getTemplate(callback) {
         if (course.settings.platform === 'campus') {
