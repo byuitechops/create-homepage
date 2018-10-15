@@ -6,7 +6,7 @@ const cheerio = require('cheerio');
 let templates = {
     'Basic': 550180, // basic
     'Basic Details': 550181, // basic-details
-    'Lg Ends Details': 550198 // large-ends-details
+    'Lg Ends Details': 550198, // large-ends-details
     'Lg Ends Plain': 'large-ends-plain',
     'Modules': 'modules',
     'Other': 'modules',
@@ -22,10 +22,6 @@ let tabs = ['other', 'modules', 'syllabus'];
 
 
 module.exports = (course, stepCallback) => {
-    // TESTING - remove for prod
-    course.settings.platform = 'campus';
-    course.info.data.campusTemplate = 'Syllabus';
-
     /* Get the template from equella */
     function getTemplate(callback) {
         if (course.settings.platform === 'campus') {
