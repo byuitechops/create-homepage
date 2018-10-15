@@ -4,14 +4,14 @@ const asyncLib = require('async');
 const cheerio = require('cheerio');
 
 let templates = {
-    'Basic': 'basic',
-    'Basic Details': 'basic-details',
-    'Lg Ends Details': 'large-ends-details',
+    'Basic': 550180, // basic
+    'Basic Details': 550181, // basic-details
+    'Lg Ends Details': 550198 // large-ends-details
     'Lg Ends Plain': 'large-ends-plain',
     'Modules': 'modules',
     'Other': 'modules',
-    'Full Pictures': 'picture-buttons-full-example',
-    'Schedule': 'detail-template-mwf',
+    'Full Pictures': 550201, // picture-buttons-full-example
+    'Schedule': 550199, // detail-template-schedule
     'Small Pictures': 'picture-buttons-small-example',
     'Sm Weeks Auto': 'weeks-auto-small',
     'Syllabus': 'syllabus',
@@ -22,10 +22,13 @@ let tabs = ['other', 'modules', 'syllabus'];
 
 
 module.exports = (course, stepCallback) => {
+    // TESTING - remove for prod
+    course.settings.platform = 'campus';
+    course.info.data.campusTemplate = 'Syllabus';
 
     /* Get the template from equella */
     function getTemplate(callback) {
-        if (course.info.data.platform === 'campus') {
+        if (course.settings.platform === 'campus') {
             if (!tabs.includes(course.info.data.campusTemplate.toLowerCase())) {
 
                 // Campus courses have more than 1 template to choose from. The template will be chosen on startup and be stored on the course object.
@@ -44,11 +47,12 @@ module.exports = (course, stepCallback) => {
                 canvas.put(`/api/v1/courses/${course.info.canvasOU}`, {
                     'course[default_view]': templates[course.info.data.campusTemplate]
                 }, (err, canvasCourse) => {
-                    if (err) stepCallback(err, course);
-                    else {
-                        course.message(`"${templates[course.info.data.campusTemplate]}" set as the Front Page`);
-                        stepCallback(null, course);
+                    if (err) {
+                        stepCallback(err, course);
+                        return;
                     }
+                    course.message(`"${templates[course.info.data.campusTemplate]}" set as the Front Page`);
+                    stepCallback(null, course);
                 });
             }
         } else {
@@ -68,7 +72,7 @@ module.exports = (course, stepCallback) => {
 
         /* Replace things easily identified with regex */
         var $;
-        if (course.info.data.platform !== 'campus') {
+        if (course.settings.platform !== 'campus') {
             // Online
             template = template.replace(/<%=\s*courseName\s*%>/gi, course.info.courseCode);
             template = template.replace(/<%=\s*courseClass\s*%>/gi, course.info.courseCode.replace(/\s/g, '').toLowerCase());
