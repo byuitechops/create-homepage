@@ -1,4 +1,3 @@
-const request = require('request');
 const canvas = require('canvas-wrapper');
 const asyncLib = require('async');
 const cheerio = require('cheerio');
@@ -6,16 +5,16 @@ const cheerio = require('cheerio');
 let templates = {
     'Basic': 550180, // basic
     'Basic Details': 550181, // basic-details
-    'Lg Ends Details': 550198 // large-ends-details
-    'Lg Ends Plain': 'large-ends-plain',
-    'Modules': 'modules',
-    'Other': 'modules',
+    'Lg Ends Details': 550198, // large-ends-details
+    'Lg Ends Plain': 550197, // large-ends-plain
     'Full Pictures': 550201, // picture-buttons-full-example
     'Schedule': 550199, // detail-template-schedule
-    'Small Pictures': 'picture-buttons-small-example',
-    'Sm Weeks Auto': 'weeks-auto-small',
-    'Syllabus': 'syllabus',
-    'Weeks Auto': 'weeks-auto-large'
+    'Small Pictures': 550200, // picture-buttons-small-example
+    'Sm Weeks Auto': 550183, // weeks-auto-small
+    'Weeks Auto': 550182, // weeks-auto-large
+    'Modules': 'modules', // Course Modules
+    'Other': 'modules', // Course Modules
+    'Syllabus': 'syllabus', // Course Syllabus
 };
 
 let tabs = ['other', 'modules', 'syllabus'];
@@ -23,7 +22,7 @@ let tabs = ['other', 'modules', 'syllabus'];
 
 module.exports = (course, stepCallback) => {
     // TESTING - remove for prod
-    course.settings.platform = 'campus';
+    course.settings.platform = 'online';
     course.info.data.campusTemplate = 'Syllabus';
 
     /* Get the template from equella */
@@ -51,18 +50,20 @@ module.exports = (course, stepCallback) => {
                         stepCallback(err, course);
                         return;
                     }
-                    course.message(`"${templates[course.info.data.campusTemplate]}" set as the Front Page`);
+                    course.log('Front Page Template Set', {
+                        'Template Used': course.info.data.campusTemplate
+                    });
                     stepCallback(null, course);
                 });
             }
         } else {
-            request('https://raw.githubusercontent.com/byuitechops/byui-design-lti/master/views/homePage.ejs', (err, res, body) => {
+            canvas.get('/api/v1/courses/1521/pages/49204', (err, page) => {
                 if (err) {
                     callback(err);
                     return;
                 }
                 course.message('Retrieved Online Homepage Template');
-                callback(null, body);
+                callback(null, page[0].body);
             });
         }
     }
@@ -74,19 +75,7 @@ module.exports = (course, stepCallback) => {
         var $;
         if (course.settings.platform !== 'campus') {
             // Online
-            template = template.replace(/<%=\s*courseName\s*%>/gi, course.info.courseCode);
-            template = template.replace(/<%=\s*courseClass\s*%>/gi, course.info.courseCode.replace(/\s/g, '').toLowerCase());
-            template = template.replace(/Additional\sResources/gi, 'Student Resources');
-
-            /* Add the generate class */
-            $ = cheerio.load(template);
-            $('.lessons').addClass('generate'); // does this work?
-
-            /* Add the homeImage src */
-            $('img').attr('src', `https://${course.info.data.domain}.instructure.com/courses/${course.info.canvasOU}/file_contents/course%20files/template/homeImage.jpg`);
-
-            template = $.html();
-
+            template = template.replace(/Online Course Template \(In Progress\)/gi, course.info.courseName);
         } else {
             // Campus
             // Add edits to the template here
@@ -105,7 +94,9 @@ module.exports = (course, stepCallback) => {
         (err, page) => {
             if (err) callback(err, page);
             else {
-                course.message(`Course Homepage successfully created with the ${course.info.data.campusTemplate} template`);
+                course.log('Course Homepage Created', {
+                    'Template Used': course.info.data.campusTemplate
+                });
                 callback(null, page);
             }
         });
@@ -120,7 +111,9 @@ module.exports = (course, stepCallback) => {
         (err, canvasCourse) => {
             if (err) callback(err, canvasCourse);
             else {
-                course.message(`"${course.info.data.campusTemplate}" template set as the Front Page`);
+                course.log('Front Page Template Set', {
+                    'Template Used': course.info.data.campusTemplate
+                });
                 callback(null, canvasCourse);
             }
         });
