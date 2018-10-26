@@ -21,10 +21,6 @@ let tabs = ['other', 'modules', 'syllabus'];
 
 
 module.exports = (course, stepCallback) => {
-    // TESTING - remove for prod
-    course.settings.platform = 'online';
-    course.info.data.campusTemplate = 'Syllabus';
-
     /* Get the template from equella */
     function getTemplate(callback) {
         if (course.settings.platform === 'campus') {
@@ -57,6 +53,7 @@ module.exports = (course, stepCallback) => {
                 });
             }
         } else {
+            // Get the online course template's homepage
             canvas.get('/api/v1/courses/1521/pages/49204', (err, page) => {
                 if (err) {
                     callback(err);
@@ -75,7 +72,8 @@ module.exports = (course, stepCallback) => {
         var $;
         if (course.settings.platform !== 'campus') {
             // Online
-            template = template.replace(/Online Course Template \(In Progress\)/gi, course.info.courseName);
+            $ = cheerio.load(template);
+            template = template.replace($('h2').first().text(), `Welcome to ${course.info.courseName}`);
         } else {
             // Campus
             // Add edits to the template here
