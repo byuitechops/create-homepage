@@ -4,7 +4,7 @@ const cheerio = require('cheerio');
 
 let templates = {
     'Basic': 550180, // basic
-    'Basic Details': 550181, // basic-details
+    'Basic Details': 926515, // basic-details
     'Lg Ends Details': 550198, // large-ends-details
     'Lg Ends Plain': 550197, // large-ends-plain
     'Full Pictures': 550201, // picture-buttons-full-example
