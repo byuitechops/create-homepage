@@ -22,11 +22,6 @@ let tabs = ['other', 'modules', 'syllabus'];
 
 module.exports = (course, stepCallback) => {
     /* Get the template from equella */
-
-    // TEST STUFF DELETE WHEN DONE
-    course.settings.platform = 'campus';
-    course.info.data.campusTemplate = 'Small Pictures';
-
     function getTemplate(callback) {
         if (course.settings.platform === 'campus') {
             if (!tabs.includes(course.info.data.campusTemplate.toLowerCase())) {
