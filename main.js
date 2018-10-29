@@ -31,6 +31,7 @@ module.exports = (course, stepCallback) => {
 
                 canvas.get(`/api/v1/courses/16631/pages/${templates[course.info.data.campusTemplate]}`, (err, page) => {
                     if (err) {
+                        // An error occurred while getting the campus template
                         callback(err);
                         return;
                     }
@@ -43,6 +44,7 @@ module.exports = (course, stepCallback) => {
                     'course[default_view]': templates[course.info.data.campusTemplate]
                 }, (err, canvasCourse) => {
                     if (err) {
+                        // An error occurred while setting the template to syllabus or modules
                         stepCallback(err, course);
                         return;
                     }
@@ -56,6 +58,7 @@ module.exports = (course, stepCallback) => {
             // Get the online course template's homepage
             canvas.get('/api/v1/courses/1521/pages/49204', (err, page) => {
                 if (err) {
+                    // An error occurred while getting the OCT template
                     callback(err);
                     return;
                 }
@@ -67,7 +70,6 @@ module.exports = (course, stepCallback) => {
 
     /* Update the template using course information */
     function updateTemplate(template, callback) {
-
         /* Replace things easily identified with regex */
         var $ = cheerio.load(template);
         if (course.settings.platform !== 'campus') {
@@ -90,6 +92,7 @@ module.exports = (course, stepCallback) => {
             'wiki_page[published]': true
         },
         (err, page) => {
+            // An error occurred while creating the front page
             if (err) callback(err, page);
             else {
                 course.log('Course Homepage Created', {
@@ -107,6 +110,7 @@ module.exports = (course, stepCallback) => {
             'course[default_view]': 'wiki'
         },
         (err, canvasCourse) => {
+            // An error occurred while updating the homepage
             if (err) callback(err, canvasCourse);
             else {
                 course.log('Front Page Template Set', {
