@@ -1,6 +1,7 @@
 /* Dependencies */
 const tap = require('tap');
 const canvas = require('canvas-wrapper');
+const cheerio = require('cheerio');
 
 module.exports = (course, callback) => {
     tap.test('create-homepage', (test) => {
@@ -13,6 +14,8 @@ module.exports = (course, callback) => {
             }
 
             var homepage = homepageArr[0];
+            var $ = cheerio.load(homepage.body);
+            var bannerSource = $('img').first().attr('src');
 
             canvas.get(`/api/v1/courses/${course.info.canvasOU}`, (err, courseArr) => {
                 if (err) {
@@ -31,6 +34,7 @@ module.exports = (course, callback) => {
                 test.equal(homepage.title, '-Course Homepage', 'The title is not set to "-Course Homepage"');
                 test.equal(homepage.editing_roles, 'teachers', 'The editing roles are not set to just "teachers"');
                 test.equal(canvasCourse.default_view, 'wiki', 'Default view for the course isn\'t set to the homepage');
+                test.equal(bannerSource, `https://byui.instructure.com/courses/${course.info.canvasOU}/file_contents/course%20files/template/homeImage.jpg`, 'Course Banner is not set');
                 test.end();
             });
         });

@@ -22,6 +22,11 @@ let tabs = ['other', 'modules', 'syllabus'];
 
 module.exports = (course, stepCallback) => {
     /* Get the template from equella */
+
+    // TEST STUFF DELETE WHEN DONE
+    course.settings.platform = 'campus';
+    course.info.data.campusTemplate = 'Small Pictures';
+
     function getTemplate(callback) {
         if (course.settings.platform === 'campus') {
             if (!tabs.includes(course.info.data.campusTemplate.toLowerCase())) {
@@ -69,14 +74,14 @@ module.exports = (course, stepCallback) => {
     function updateTemplate(template, callback) {
 
         /* Replace things easily identified with regex */
-        var $;
+        var $ = cheerio.load(template);
         if (course.settings.platform !== 'campus') {
             // Online
-            $ = cheerio.load(template);
             template = template.replace($('h2').first().text(), `Welcome to ${course.info.courseName}`);
         } else {
             // Campus
-            // Add edits to the template here
+            $('img').first().attr('src', `https://byui.instructure.com/courses/${course.info.canvasOU}/file_contents/course%20files/template/homeImage.jpg`);
+            template = $.html();
         }
         callback(null, template);
     }
