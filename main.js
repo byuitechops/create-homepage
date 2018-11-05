@@ -28,7 +28,7 @@ let templates = {
         'name': 'detail-template-schedule'
     },
     'Small Pictures': {
-        'id': 0, //550200,
+        'id': 550200,
         'name': 'picture-buttons-small-example'
     },
     'Sm Weeks Auto': {
