@@ -3,15 +3,42 @@ const asyncLib = require('async');
 const cheerio = require('cheerio');
 
 let templates = {
-    'Basic': 550180, // basic
-    'Basic Details': 944381, // basic-details
-    'Lg Ends Details': 550198, // large-ends-details
-    'Lg Ends Plain': 550197, // large-ends-plain
-    'Full Pictures': 550201, // picture-buttons-full-example
-    'Schedule': 550199, // detail-template-schedule
-    'Small Pictures': 550200, // picture-buttons-small-example
-    'Sm Weeks Auto': 550183, // weeks-auto-small
-    'Weeks Auto': 550182, // weeks-auto-large
+    'Basic': {
+        'id': 550180,
+        'name': 'basic'
+    },
+    'Basic Details': {
+        'id': 944381,
+        'name': 'basic-details'
+    },
+    'Lg Ends Details': {
+        'id': 550198,
+        'name': 'large-ends-details'
+    },
+    'Lg Ends Plain': {
+        'id': 550197,
+        'name': 'large-ends-plain'
+    },
+    'Full Pictures': {
+        'id': 550201,
+        'name': 'picture-buttons-full-example'
+    },
+    'Schedule': {
+        'id': 550199,
+        'name': 'detail-template-schedule'
+    },
+    'Small Pictures': {
+        'id': 550200,
+        'name': 'picture-buttons-small-example'
+    },
+    'Sm Weeks Auto': {
+        'id': 550183,
+        'name': 'weeks-auto-small'
+    },
+    'Weeks Auto': {
+        'id': 550182,
+        'name': 'weeks-auto-large'
+    },
     'Modules': 'modules', // Course Modules
     'Other': 'modules', // Course Modules
     'Syllabus': 'syllabus', // Course Syllabus
@@ -19,24 +46,32 @@ let templates = {
 
 let tabs = ['other', 'modules', 'syllabus'];
 
-
 module.exports = (course, stepCallback) => {
     /* Get the template from equella */
     function getTemplate(callback) {
         if (course.settings.platform === 'campus') {
             if (!tabs.includes(course.info.data.campusTemplate.toLowerCase())) {
-
                 // Campus courses have more than 1 template to choose from. The template will be chosen on startup and be stored on the course object.
                 // The templates are stored here: https://byui.instructure.com/courses/16631/pages. Use the canvas-wrapper to get the correct template.
-
-                canvas.get(`/api/v1/courses/16631/pages/${templates[course.info.data.campusTemplate]}`, (err, page) => {
+                canvas.get(`/api/v1/courses/16631/pages/${templates[course.info.data.campusTemplate].id}`, (err, page) => {
                     if (err) {
-                        // An error occurred while getting the campus template
-                        callback(err);
-                        return;
+                        course.warning(`Unable to get ${course.info.data.campusTemplate} template by ID. Attempting to get ${course.info.data.campusTemplate} template by name...`);
+                        // An error occurred while getting the campus template by id
+                        // Now try getting the campus template by name
+                        canvas.get(`/api/v1/courses/16631/pages/${templates[course.info.data.campusTemplate].name}`, (err, page) => {
+                            if (err) {
+                                // An error occurred while getting the campus template by name
+                                course.error(`Failed to get ${course.info.data.campusTemplate} template by name and ID.`);
+                                callback(err);
+                                return;
+                            }
+                            course.message(`Retrieved ${course.info.data.campusTemplate} Template by name.`);
+                            callback(null, page[0].body);
+                        });
+                    } else {
+                        course.message(`Retrieved ${course.info.data.campusTemplate} Template by id.`);
+                        callback(null, page[0].body);
                     }
-                    course.message(`Retrieved ${course.info.data.campusTemplate} Template`);
-                    callback(null, page[0].body);
                 });
             } else {
                 // Set the homepage to be either the syllabus or modules tab
