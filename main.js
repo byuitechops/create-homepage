@@ -47,10 +47,6 @@ let templates = {
 let tabs = ['other', 'modules', 'syllabus'];
 
 module.exports = (course, stepCallback) => {
-    // TEST STUFF DELETE WHEN DONE	
-    course.settings.platform = 'campus';
-    course.info.data.campusTemplate = 'Small Pictures';
-
     /* Get the template from equella */
     function getTemplate(callback) {
         if (course.settings.platform === 'campus') {
@@ -59,13 +55,13 @@ module.exports = (course, stepCallback) => {
                 // The templates are stored here: https://byui.instructure.com/courses/16631/pages. Use the canvas-wrapper to get the correct template.
                 canvas.get(`/api/v1/courses/16631/pages/${templates[course.info.data.campusTemplate].id}`, (err, page) => {
                     if (err) {
-                        course.warning('Unable to get campus template by ID. Attempting to get campus template by name...');
+                        course.warning(`Unable to get ${course.info.data.campusTemplate} template by ID. Attempting to get ${course.info.data.campusTemplate} template by name...`);
                         // An error occurred while getting the campus template by id
                         // Now try getting the campus template by name
                         canvas.get(`/api/v1/courses/16631/pages/${templates[course.info.data.campusTemplate].name}`, (err, page) => {
                             if (err) {
                                 // An error occurred while getting the campus template by name
-                                course.error('Failed to get campus template by name and ID.');
+                                course.error(`Failed to get ${course.info.data.campusTemplate} template by name and ID.`);
                                 callback(err);
                                 return;
                             }
