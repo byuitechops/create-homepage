@@ -8,7 +8,7 @@ let templates = {
         'name': 'basic'
     },
     'Basic Details': {
-        'id': 926515,
+        'id': 944381,
         'name': 'basic-details'
     },
     'Lg Ends Details': {
